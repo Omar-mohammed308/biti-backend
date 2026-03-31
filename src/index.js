@@ -1,5 +1,4 @@
 import express from 'express';
-import './config/migrate.js';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
