@@ -36,7 +36,6 @@ const allowed = (process.env.FRONTEND_URL || '')
 
 app.use(cors({
   origin: (origin, cb) => {
-    // allow no-origin (curl, Postman) and any listed frontend
     if (!origin || allowed.includes(origin) || process.env.NODE_ENV !== 'production') {
       cb(null, true);
     } else {
@@ -53,8 +52,14 @@ app.use(express.urlencoded({ extended: true }));
 /* ── Static uploads ────────────────────────────────────────────────── */
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-/* ── Health ────────────────────────────────────────────────────────── */
-app.get('/health', (_req, res) => res.json({ ok: true, ts: new Date() }));
+/* ── Health + Root ─────────────────────────────────────────────────── */
+app.get('/', (_req, res) => {
+  res.status(200).send('Bitora backend is running');
+});
+
+app.get('/health', (_req, res) => {
+  res.status(200).json({ status: 'ok', ts: new Date().toISOString() });
+});
 
 /* ── Routes ────────────────────────────────────────────────────────── */
 app.use('/api/auth',        authRoutes);
@@ -77,4 +82,6 @@ app.use((err, _req, res, _next) => {
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`🚀  Bitora backend on :${PORT}`));
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Bitora backend on :${PORT}`);
+});
